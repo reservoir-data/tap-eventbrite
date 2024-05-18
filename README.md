@@ -20,6 +20,14 @@ Built with the [Meltano Tap SDK](https://sdk.meltano.com) for Singer Taps.
 * 3.11
 * 3.12
 
+## Supported streams
+
+* `organizations`
+* `events`
+
+> [!IMPORTANT]
+> New streams will be added on demand. Please open an issue if you need a new stream.
+
 ## Settings
 
 | Setting    | Required | Default                    | Description                        |
