@@ -18,7 +18,7 @@ class EventbritePaginator(JSONPathPaginator):
     def has_more(self, response: Response) -> bool:
         """Return True if there are more pages available."""
         pagination = response.json().get("pagination", {})
-        return pagination.get("has_more_items", False)
+        return pagination.get("has_more_items", False)  # type: ignore[no-any-return]
 
 
 class EventbriteStream(RESTStream[t.Any]):
@@ -27,7 +27,7 @@ class EventbriteStream(RESTStream[t.Any]):
     @property
     def url_base(self) -> str:
         """Return the API URL root, configurable via tap settings."""
-        return self.config["base_url"]
+        return self.config["base_url"]  # type: ignore[no-any-return]
 
     @property
     def authenticator(self) -> BearerTokenAuthenticator:

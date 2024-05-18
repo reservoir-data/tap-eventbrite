@@ -46,9 +46,9 @@ class Organizations(EventbriteStream):
 
     def generate_child_contexts(
         self,
-        record: dict,
-        context: dict | None,  # noqa: ARG002
-    ) -> t.Iterable[dict | None]:
+        record: dict[str, t.Any],
+        context: dict[str, t.Any] | None,  # noqa: ARG002
+    ) -> t.Iterable[dict[str, t.Any] | None]:
         """Generate child contexts."""
         yield {"organization_id": record["id"]}
 
