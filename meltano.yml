@@ -1,0 +1,40 @@
+version: 1
+send_anonymous_usage_stats: false
+project_id: tap-eventbrite
+default_environment: dev
+environments:
+- name: dev
+plugins:
+  extractors:
+  - name: tap-eventbrite
+    label: Eventbrite
+    namespace: eventbrite
+    description: Global self-service ticketing platform for live experiences
+    repository: https://github.com/reservoir-data/tap-eventbrite
+    docs: https://github.com/reservoir-data/tap-eventbrite#readme
+    pip_url: -e .
+    capabilities:
+    - state
+    - catalog
+    - discover
+    settings:
+    - name: token
+      kind: password
+      label: API Token
+      description: API Token for Eventbrite
+      sensitive: true
+    - name: base_url
+      kind: string
+      label: Base URL
+      description: Base URL for Eventbrite API
+      value: https://api.eventbrite.com
+    - name: start_date
+      kind: date_iso8601
+      label: Start Date
+      description: Earliest datetime to get data from
+    config:
+      start_date: "2024-05-18"
+  loaders:
+  - name: target-jsonl
+    variant: andyh1203
+    pip_url: target-jsonl
