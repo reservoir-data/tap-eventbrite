@@ -34,6 +34,7 @@ dynamic = [
   "version",
 ]
 dependencies = [
+  "requests~=2.31.0",
   "singer-sdk~=0.37.0",
 ]
 optional-dependencies.dev = [
@@ -46,6 +47,7 @@ optional-dependencies.testing = [
 ]
 optional-dependencies.typing = [
   "mypy",
+  "types-requests~=2.31.0",
 ]
 urls.Documentation = "https://github.com/reservoir-data/tap-eventbrite#readme"
 urls.Homepage = "https://github.com/reservoir-data/tap-eventbrite"
