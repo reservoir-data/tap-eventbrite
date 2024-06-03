@@ -47,7 +47,7 @@ optional-dependencies.testing = [
 ]
 optional-dependencies.typing = [
   "mypy",
-  "types-requests~=2.32.0.20240523",
+  "types-requests",
 ]
 urls.Documentation = "https://github.com/reservoir-data/tap-eventbrite#readme"
 urls.Homepage = "https://github.com/reservoir-data/tap-eventbrite"
