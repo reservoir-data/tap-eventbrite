@@ -34,6 +34,7 @@ jobs:
           - "3.10"
           - "3.11"
           - "3.12"
+          - "3.13"
         include:
         - { script: "test:dependencies", python-version: "3.12" }
         - { script: "typing:check",      python-version: "3.12" }
@@ -44,6 +45,7 @@ jobs:
       id: setup-python
       with:
         python-version: ${{ matrix.python-version }}
+        allow-prereleases: true
         cache: pip
 
     - name: Upgrade pip
