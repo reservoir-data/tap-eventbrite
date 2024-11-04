@@ -604,7 +604,3 @@ class Events(EventbriteStream):
         params = super().get_url_params(context, next_page_token)
         params["expand"] = "bookmark_info"
         return params
-
-
-# checkout_settings
-# object

@@ -70,7 +70,7 @@ jobs:
     - name: Run tests
       env:
         TAP_EVENTBRITE_TOKEN: ${{ secrets.TAP_EVENTBRITE_TOKEN }}
-        TAP_EVENTBRITE_BASE_URL: 'https://private-anon-cdfab4c25c-eventbriteapiv3public.apiary-mock.com'
+        TAP_EVENTBRITE_BASE_URL: ${{ secrets.TAP_EVENTBRITE_BASE_URL }}
         TAP_EVENTBRITE_START_DATE: ${{ secrets.TAP_EVENTBRITE_START_DATE }}
       run: |
         hatch run ${{ matrix.script }}
