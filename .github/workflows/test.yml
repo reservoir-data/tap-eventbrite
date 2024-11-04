@@ -33,7 +33,6 @@ jobs:
       matrix:
         script: ["test:integration"]
         python-version:
-          - "3.8"
           - "3.9"
           - "3.10"
           - "3.11"
@@ -50,29 +49,20 @@ jobs:
       with:
         python-version: ${{ matrix.python-version }}
         allow-prereleases: true
-        cache: pip
 
-    - name: Upgrade pip
-      run: |
-        pip install pip
-        pip --version
-
-    - name: Upgrade pip in virtual environments
-      shell: python
-      run: |
-        import os
-        import pip
-
-        with open(os.environ["GITHUB_ENV"], mode="a") as io:
-            print(f"VIRTUALENV_PIP={pip.__version__}", file=io)
+    - uses: astral-sh/setup-uv@v3
+      with:
+        version: ">=0.4.18"
 
     - name: Install Hatch
       run: |
-        pipx install --python '${{ steps.setup-python.outputs.python-path }}' hatch
+        uv tool install hatch
         hatch --version
 
     - name: Run tests
       env:
+        HATCH_PYTHON: ${{ steps.setup-python.outputs.python-path }}
+        HATCH_VERBOSE: "1"
         TAP_EVENTBRITE_TOKEN: ${{ secrets.TAP_EVENTBRITE_TOKEN }}
         TAP_EVENTBRITE_BASE_URL: ${{ secrets.TAP_EVENTBRITE_BASE_URL }}
         TAP_EVENTBRITE_START_DATE: ${{ secrets.TAP_EVENTBRITE_START_DATE }}
