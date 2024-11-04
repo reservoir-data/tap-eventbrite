@@ -8,6 +8,9 @@ from singer_sdk import typing as th
 
 from tap_eventbrite.client import EventbriteStream
 
+if t.TYPE_CHECKING:
+    from singer_sdk.helpers.types import Context
+
 
 class Organizations(EventbriteStream):
     """Organizations stream.
@@ -47,8 +50,8 @@ class Organizations(EventbriteStream):
     def generate_child_contexts(
         self,
         record: dict[str, t.Any],
-        context: dict[str, t.Any] | None,  # noqa: ARG002
-    ) -> t.Iterable[dict[str, t.Any] | None]:
+        context: Context | None,  # noqa: ARG002
+    ) -> t.Iterable[Context | None]:
         """Generate child contexts."""
         yield {"organization_id": record["id"]}
 
@@ -589,7 +592,7 @@ class Events(EventbriteStream):
 
     def get_url_params(
         self,
-        context: dict[str, t.Any] | None,
+        context: Context | None,
         next_page_token: str | None,
     ) -> dict[str, t.Any]:
         """Get URL query parameters.
@@ -604,7 +607,3 @@ class Events(EventbriteStream):
         params = super().get_url_params(context, next_page_token)
         params["expand"] = "bookmark_info"
         return params
-
-
-# checkout_settings
-# object

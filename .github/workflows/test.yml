@@ -17,6 +17,10 @@ on:
       - pyproject.toml
       - .github/workflows/test.yml
       - .github/workflows/constraints.txt
+  workflow_dispatch:
+  schedule:
+  # Run weekly on Monday at 12:00 PM UTC
+  - cron: "0 12 * * 1"
 
 jobs:
   test:
@@ -61,7 +65,7 @@ jobs:
         HATCH_PYTHON: ${{ steps.setup-python.outputs.python-path }}
         HATCH_VERBOSE: "1"
         TAP_EVENTBRITE_TOKEN: ${{ secrets.TAP_EVENTBRITE_TOKEN }}
-        TAP_EVENTBRITE_BASE_URL: 'https://private-anon-cdfab4c25c-eventbriteapiv3public.apiary-mock.com'
+        TAP_EVENTBRITE_BASE_URL: ${{ secrets.TAP_EVENTBRITE_BASE_URL }}
         TAP_EVENTBRITE_START_DATE: ${{ secrets.TAP_EVENTBRITE_START_DATE }}
       run: |
         hatch run ${{ matrix.script }}
