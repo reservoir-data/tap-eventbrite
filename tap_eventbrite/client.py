@@ -2,13 +2,13 @@
 
 from __future__ import annotations
 
-import typing as t
+from typing import TYPE_CHECKING, Any, override
 
 from singer_sdk import RESTStream
 from singer_sdk.authenticators import BearerTokenAuthenticator
 from singer_sdk.pagination import JSONPathPaginator
 
-if t.TYPE_CHECKING:
+if TYPE_CHECKING:
     from requests import Response
     from singer_sdk.helpers.types import Context
 
@@ -16,65 +16,37 @@ if t.TYPE_CHECKING:
 class EventbritePaginator(JSONPathPaginator):
     """Eventbrite paginator class."""
 
+    @override
     def has_more(self, response: Response) -> bool:
         """Return True if there are more pages available."""
         pagination = response.json().get("pagination", {})
         return pagination.get("has_more_items", False)  # type: ignore[no-any-return]
 
 
-class EventbriteStream(RESTStream[t.Any]):
+class EventbriteStream(RESTStream[Any]):
     """Eventbrite stream class."""
 
+    @override
     @property
     def url_base(self) -> str:
-        """Return the API URL root, configurable via tap settings."""
+        """The API URL root, configurable via tap settings."""
         return self.config["base_url"]  # type: ignore[no-any-return]
 
+    @override
     @property
     def authenticator(self) -> BearerTokenAuthenticator:
-        """Get an authenticator object.
+        return BearerTokenAuthenticator(token=self.config["token"])
 
-        Returns:
-            The authenticator instance for this REST stream.
-        """
-        token: str = self.config["token"]
-        return BearerTokenAuthenticator.create_for_stream(
-            self,
-            token=token,
-        )
-
+    @override
     def get_new_paginator(self) -> EventbritePaginator:
-        """Return a new paginator object.
-
-        Returns:
-            A paginator object.
-        """
         return EventbritePaginator(jsonpath="$.pagination.continuation")
 
-    @property
-    def http_headers(self) -> dict[str, str]:
-        """Return the http headers needed.
-
-        Returns:
-            A dictionary of HTTP headers.
-        """
-        return {"User-Agent": f"{self.tap_name}/{self._tap.plugin_version}"}
-
+    @override
     def get_url_params(
         self,
-        context: Context | None,  # noqa: ARG002
+        context: Context | None,
         next_page_token: str | None,
-    ) -> dict[str, t.Any]:
-        """Get URL query parameters.
-
-        Args:
-            context: Stream sync context.
-            next_page_token: Next offset.
-
-        Returns:
-            Mapping of URL query parameters.
-        """
-        params: dict[str, t.Any] = {
+    ) -> dict[str, Any]:
+        return {
             "continuation": next_page_token,
         }
-        return params
