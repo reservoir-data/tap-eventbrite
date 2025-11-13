@@ -78,7 +78,7 @@ tap-eventbrite --config CONFIG --discover > ./catalog.json
 ### Initialize your Development Environment
 
 ```bash
-pipx install hatch
+uv tool install --with tox-uv tox
 ```
 
 ### Create and Run Tests
@@ -86,13 +86,13 @@ pipx install hatch
 Run integration tests:
 
 ```bash
-hatch run test:integration
+tox -e 3.14
 ```
 
 You can also test the `tap-eventbrite` CLI interface directly:
 
 ```bash
-hatch run sync:console -- --about --format=json
+tox -e sync -- --about --format=json
 ```
 
 ### Testing with [Meltano](https://www.meltano.com)

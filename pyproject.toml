@@ -21,84 +21,51 @@ maintainers = [
 authors = [
   { name = "Edgar Ramírez-Mondragón", email = "edgarrmondragon@hey.com" },
 ]
-requires-python = ">=3.9"
+requires-python = ">=3.12"
 classifiers = [
   "Programming Language :: Python :: 3 :: Only",
-  "Programming Language :: Python :: 3.9",
-  "Programming Language :: Python :: 3.10",
-  "Programming Language :: Python :: 3.11",
   "Programming Language :: Python :: 3.12",
   "Programming Language :: Python :: 3.13",
+  "Programming Language :: Python :: 3.14",
 ]
 dynamic = [
   "version",
 ]
 dependencies = [
-  "requests~=2.32.2",
-  "singer-sdk~=0.43.1",
-]
-optional-dependencies.dev = [
-  "tap-eventbrite[testing,typing]",
-]
-optional-dependencies.testing = [
-  "deptry>=0.12",
-  "pytest>=8",
-  "singer-sdk[testing]",
-]
-optional-dependencies.typing = [
-  "mypy",
-  "types-requests",
+  "singer-sdk~=0.52.5",
 ]
 urls.Documentation = "https://github.com/reservoir-data/tap-eventbrite#readme"
 urls.Homepage = "https://github.com/reservoir-data/tap-eventbrite"
 urls.Repository = "https://github.com/reservoir-data/tap-eventbrite"
 scripts."tap-eventbrite" = "tap_eventbrite.tap:TapEventbrite.cli"
 
+[dependency-groups]
+dev = [
+  { include-group = "testing" },
+  { include-group = "typing" },
+]
+testing = [
+  "deptry>=0.12",
+  "pytest>=9",
+  "singer-sdk[testing]",
+]
+typing = [
+  { include-group = "testing" },
+  "mypy",
+  "ty>=0.0.1a26",
+  "types-requests",
+]
+
 [tool.hatch.version]
 source = "vcs"
 
-[tool.hatch.envs.default]
-installer = "uv"
-
-[tool.hatch.envs.sync.scripts]
-console = "tap-eventbrite {args}"
-jsonl = "tap-eventbrite {args} > tap-eventbrite.jsonl"
-
-[tool.hatch.envs.test]
-features = [
-  "testing",
-]
-[tool.hatch.envs.test.scripts]
-integration = "pytest {args:tests}"
-dependencies = "deptry ."
-
-[tool.hatch.envs.all]
-template = "test"
-[[tool.hatch.envs.all.matrix]]
-python = [
-  "3.9",
-  "3.10",
-  "3.11",
-  "3.12",
-  "3.13",
-]
-
-[tool.hatch.envs.typing]
-features = [
-  "testing",
-  "typing",
-]
-[tool.hatch.envs.typing.scripts]
-check = "mypy --strict {args:tap_eventbrite tests}"
-
 [tool.ruff]
-line-length = 88
+line-length = 100
 
 lint.select = [
   "ALL",
 ]
 lint.ignore = [
-  "ANN101", # missing-type-self
   "COM812", # missing-trailing-comma
   "DJ",     # flake8-django
   "FIX002", # line-contains-todo
@@ -126,7 +93,7 @@ lint.pydocstyle.convention = "google"
 [tool.deptry.package_module_name_map]
 mypy = "mypy"
 pytest = "pytest"
-tap-eventbrite = "tap_eventbrite"
+ty = "ty"
 types-requests = "requests"
 
 [tool.deptry.per_rule_ignores]
@@ -137,16 +104,46 @@ DEP002 = [
 ]
 
 [tool.pyproject-fmt]
-max_supported_python = "3.13"
+max_supported_python = "3.14"
 
-[tool.pytest.ini_options]
-addopts = "-vvv"
+[tool.pytest]
+addopts = ["-v"]
 
 [tool.mypy]
-python_version = "3.12"
 warn_redundant_casts = true
 warn_return_any = true
 warn_no_return = true
 warn_unreachable = true
 warn_unused_configs = true
 warn_unused_ignores = true
+
+[tool.tox]
+min_version = "4.22"
+requires = [ "tox", "tox-uv" ]
+env_list = [
+  "dependencies",
+  "typing",
+  "3.14",
+  "3.13",
+  "3.12",
+]
+
+[tool.tox.env_run_base]
+runner = "uv-venv-lock-runner"
+pass_env = [ "TAP_EVENTBRITE_*" ]
+dependency_groups = [ "testing" ]
+commands = [ [ "pytest", { replace = "posargs", default = [ "tests" ], extend = true } ] ]
+
+[tool.tox.env.dependencies]
+dependency_groups = [ "testing" ]
+commands = [ [ "deptry", "." ] ]
+
+[tool.tox.env.sync]
+commands = [ [ "tap-eventbrite", { replace = "posargs", default = [ "--config=ENV" ], extend = true } ] ]
+
+[tool.tox.env.typing]
+dependency_groups = [ "testing", "typing" ]
+commands = [
+  [ "mypy", "--strict", { replace = "posargs", default = [ "tap_eventbrite", "tests" ], extend = true } ],
+  [ "ty", "check", { replace = "posargs", default = [ "tap_eventbrite", "tests" ], extend = true } ],
+]

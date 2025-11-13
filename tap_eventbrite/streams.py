@@ -2,13 +2,15 @@
 
 from __future__ import annotations
 
-import typing as t
+from typing import TYPE_CHECKING, Any, override
 
 from singer_sdk import typing as th
 
 from tap_eventbrite.client import EventbriteStream
 
-if t.TYPE_CHECKING:
+if TYPE_CHECKING:
+    from collections.abc import Iterable
+
     from singer_sdk.helpers.types import Context
 
 
@@ -45,14 +47,34 @@ class Organizations(EventbriteStream):
             th.StringType,
             description="The organization image id",
         ),
+        th.Property(
+            "parent_id",
+            th.StringType,
+            description="The organization parent id",
+        ),
+        th.Property(
+            "locale",
+            th.StringType,
+            description="The organization locale",
+        ),
+        th.Property(
+            "created",
+            th.DateTimeType,
+            description="The organization creation date",
+        ),
+        th.Property(
+            "_type",
+            th.StringType,
+            description="The organization type",
+        ),
     ).to_dict()
 
+    @override
     def generate_child_contexts(
         self,
-        record: dict[str, t.Any],
-        context: Context | None,  # noqa: ARG002
-    ) -> t.Iterable[Context | None]:
-        """Generate child contexts."""
+        record: dict[str, Any],
+        context: Context | None,
+    ) -> Iterable[Context | None]:
         yield {"organization_id": record["id"]}
 
 
@@ -573,7 +595,7 @@ class Events(EventbriteStream):
                             th.Property(
                                 "payment_method",
                                 th.StringType(),
-                                description="Set of possible values: [CASH, CHECK, INVOICE]",  # noqa: E501
+                                description="Set of possible values: [CASH, CHECK, INVOICE]",
                             ),
                             th.Property("instructions", th.StringType),
                         ),
@@ -590,20 +612,13 @@ class Events(EventbriteStream):
         ),
     ).to_dict()
 
+    @override
     def get_url_params(
         self,
         context: Context | None,
         next_page_token: str | None,
-    ) -> dict[str, t.Any]:
-        """Get URL query parameters.
-
-        Args:
-            context: Stream sync context.
-            next_page_token: Next offset.
-
-        Returns:
-            Mapping of URL query parameters.
-        """
-        params = super().get_url_params(context, next_page_token)
-        params["expand"] = "bookmark_info"
-        return params
+    ) -> dict[str, Any]:
+        return {
+            **super().get_url_params(context, next_page_token),
+            "expand": "bookmark_info",
+        }

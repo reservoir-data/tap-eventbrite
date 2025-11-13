@@ -7,6 +7,7 @@ on:
       - tap_eventbrite/**
       - tests/**
       - pyproject.toml
+      - uv.lock
       - .github/workflows/test.yml
       - .github/workflows/constraints.txt
   pull_request:
@@ -15,6 +16,7 @@ on:
       - tap_eventbrite/**
       - tests/**
       - pyproject.toml
+      - uv.lock
       - .github/workflows/test.yml
       - .github/workflows/constraints.txt
   workflow_dispatch:
@@ -22,49 +24,47 @@ on:
   # Run weekly on Monday at 12:00 PM UTC
   - cron: "0 12 * * 1"
 
+env:
+  FORCE_COLOR: "1"
+
 jobs:
   test:
-    runs-on: ubuntu-latest
-    env:
-      FORCE_COLOR: "1"
-      PIP_CONSTRAINT: ${{ github.workspace }}/.github/workflows/constraints.txt
+    runs-on: ubuntu-24.04
     strategy:
       fail-fast: false
       matrix:
-        script: ["test:integration"]
         python-version:
-          - "3.9"
-          - "3.10"
-          - "3.11"
           - "3.12"
           - "3.13"
+          - "3.14"
         include:
-        - { script: "test:dependencies", python-version: "3.x" }
-        - { script: "typing:check",      python-version: "3.x" }
+        - { environment: "dependencies", python-version: "3.x" }
+        - { environment: "typing",       python-version: "3.x" }
 
     steps:
-    - uses: actions/checkout@v4
-    - uses: actions/setup-python@v5
+    - uses: actions/checkout@08eba0b27e820071cde6df949e0beb9ba4906955 # v4.3.0
+    - uses: actions/setup-python@e797f83bcb11b83ae66e0230d6156d7c80228e7c # v6.0.0
       id: setup-python
       with:
         python-version: ${{ matrix.python-version }}
         allow-prereleases: true
 
-    - uses: astral-sh/setup-uv@v5
+    - uses: astral-sh/setup-uv@d4b2f3b6ecc6e67c4457f6d3e41ec42d3d0fcb86 # v5.4.2
       with:
-        version: ">=0.4.18"
+        version: ">=0.9"
 
-    - name: Install Hatch
+    - name: Install Tox
+      env:
+        UV_CONSTRAINT: ${{ github.workspace }}/.github/workflows/constraints.txt
+        UV_PYTHON: ${{ steps.setup-python.outputs.python-path }}
       run: |
-        uv tool install hatch
-        hatch --version
+        uv tool install --with tox-uv tox
+        tox --version
 
     - name: Run tests
       env:
-        HATCH_PYTHON: ${{ steps.setup-python.outputs.python-path }}
-        HATCH_VERBOSE: "1"
         TAP_EVENTBRITE_TOKEN: ${{ secrets.TAP_EVENTBRITE_TOKEN }}
         TAP_EVENTBRITE_BASE_URL: ${{ secrets.TAP_EVENTBRITE_BASE_URL }}
         TAP_EVENTBRITE_START_DATE: ${{ secrets.TAP_EVENTBRITE_START_DATE }}
       run: |
-        hatch run ${{ matrix.script }}
+        tox -e ${{ matrix.environment || matrix.python-version }}
