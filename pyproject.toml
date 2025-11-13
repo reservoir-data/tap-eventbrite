@@ -50,10 +50,10 @@ testing = [
   "singer-sdk[testing]",
 ]
 typing = [
-  { include-group = "testing" },
   "mypy",
   "ty>=0.0.1a26",
   "types-requests",
+  { include-group = "testing" },
 ]
 
 [tool.hatch.version]
@@ -107,15 +107,7 @@ DEP002 = [
 max_supported_python = "3.14"
 
 [tool.pytest]
-addopts = ["-v"]
-
-[tool.mypy]
-warn_redundant_casts = true
-warn_return_any = true
-warn_no_return = true
-warn_unreachable = true
-warn_unused_configs = true
-warn_unused_ignores = true
+addopts = [ "-v" ]
 
 [tool.tox]
 min_version = "4.22"
@@ -147,3 +139,11 @@ commands = [
   [ "mypy", "--strict", { replace = "posargs", default = [ "tap_eventbrite", "tests" ], extend = true } ],
   [ "ty", "check", { replace = "posargs", default = [ "tap_eventbrite", "tests" ], extend = true } ],
 ]
+
+[tool.mypy]
+warn_redundant_casts = true
+warn_return_any = true
+warn_no_return = true
+warn_unreachable = true
+warn_unused_configs = true
+warn_unused_ignores = true

@@ -1,7 +1,7 @@
-version: 1
 send_anonymous_usage_stats: false
 project_id: tap-eventbrite
 default_environment: dev
+requires_meltano: ">=4"
 environments:
 - name: dev
 plugins:
@@ -10,13 +10,18 @@ plugins:
     label: Eventbrite
     namespace: eventbrite
     description: Global self-service ticketing platform for live experiences
-    repository: https://github.com/reservoir-data/tap-eventbrite
+    repo: https://github.com/reservoir-data/tap-eventbrite
     docs: https://github.com/reservoir-data/tap-eventbrite#readme
     pip_url: -e .
     capabilities:
     - state
     - catalog
     - discover
+    - about
+    - stream-maps
+    - schema-flattening
+    - batch
+    - structured-logging
     settings:
     - name: token
       kind: password
@@ -27,7 +32,7 @@ plugins:
       kind: string
       label: Base URL
       description: Base URL for Eventbrite API
-      value: https://api.eventbrite.com
+      value: https://www.eventbriteapi.com
     - name: start_date
       kind: date_iso8601
       label: Start Date

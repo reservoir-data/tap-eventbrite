@@ -261,10 +261,7 @@ class Events(EventbriteStream):
                     ),
                 ),
             ),
-            description=(
-                "This is an object of properties that detail dimensions of music "
-                "events."
-            ),
+            description="This is an object of properties that detail dimensions of music events.",
         ),
         th.Property(
             "bookmark_info",
@@ -363,8 +360,7 @@ class Events(EventbriteStream):
                     "is_free",
                     th.BooleanType,
                     description=(
-                        "Whether this is a free event. Mutually exclusive with ticket "
-                        "price range."
+                        "Whether this is a free event. Mutually exclusive with ticket price range."
                     ),
                 ),
                 th.Property(
@@ -466,8 +462,7 @@ class Events(EventbriteStream):
             "series_id",
             th.StringType,
             description=(
-                "If the event is part of a series, this is the event id of the series "
-                "parent"
+                "If the event is part of a series, this is the event id of the series parent"
             ),
         ),
         th.Property(
@@ -541,9 +536,7 @@ class Events(EventbriteStream):
                 th.Property(
                     "message",
                     th.StringType,
-                    description=(
-                        "Custom message associated with the current event sales status"
-                    ),
+                    description="Custom message associated with the current event sales status",
                 ),
                 th.Property(
                     "message_type",
@@ -556,9 +549,7 @@ class Events(EventbriteStream):
                     description="Message code",
                 ),
             ),
-            description=(
-                "Additional data about the sales status of the event (optional)."
-            ),
+            description="Additional data about the sales status of the event (optional).",
         ),
         th.Property(
             "checkout_settings",
