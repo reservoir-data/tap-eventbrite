@@ -57,8 +57,8 @@ typing = [
 ]
 
 [tool.hatch]
-version.fallback-version = "0.0.0"
 version.source = "vcs"
+version.fallback-version = "0.0.0"
 
 [tool.ruff]
 line-length = 100
@@ -90,26 +90,26 @@ lint.isort.required-imports = [
 lint.pydocstyle.convention = "google"
 
 [tool.deptry]
-package_module_name_map.mypy = "mypy"
-package_module_name_map.pytest = "pytest"
-package_module_name_map.ty = "ty"
-package_module_name_map.types-requests = "requests"
 per_rule_ignores.DEP002 = [
   "deptry",
   "mypy",
   "pytest",
 ]
+package_module_name_map.mypy = "mypy"
+package_module_name_map.pytest = "pytest"
+package_module_name_map.ty = "ty"
+package_module_name_map.types-requests = "requests"
 
 [tool.pyproject-fmt]
 max_supported_python = "3.14"
 
 [tool.mypy]
 warn_redundant_casts = true
-warn_return_any = true
+warn_unused_ignores = true
 warn_no_return = true
+warn_return_any = true
 warn_unreachable = true
 warn_unused_configs = true
-warn_unused_ignores = true
 
 [tool.pytest]
 addopts = [ "-v" ]
@@ -118,21 +118,21 @@ addopts = [ "-v" ]
 min_version = "4.22"
 requires = [ "tox", "tox-uv" ]
 env_list = [
-  "dependencies",
-  "typing",
   "3.14",
   "3.13",
   "3.12",
+  "dependencies",
+  "typing",
 ]
-env.dependencies.dependency_groups = [ "testing" ]
 env.dependencies.commands = [ [ "deptry", "." ] ]
+env.dependencies.dependency_groups = [ "testing" ]
 env.sync.commands = [ [ "tap-eventbrite", { replace = "posargs", default = [ "--config=ENV" ], extend = true } ] ]
-env.typing.dependency_groups = [ "testing", "typing" ]
 env.typing.commands = [
   [ "mypy", "--strict", { replace = "posargs", default = [ "tap_eventbrite", "tests" ], extend = true } ],
   [ "ty", "check", { replace = "posargs", default = [ "tap_eventbrite", "tests" ], extend = true } ],
 ]
-env_run_base.runner = "uv-venv-lock-runner"
-env_run_base.pass_env = [ "TAP_EVENTBRITE_*" ]
-env_run_base.dependency_groups = [ "testing" ]
+env.typing.dependency_groups = [ "testing", "typing" ]
 env_run_base.commands = [ [ "pytest", { replace = "posargs", default = [ "tests" ], extend = true } ] ]
+env_run_base.dependency_groups = [ "testing" ]
+env_run_base.pass_env = [ "TAP_EVENTBRITE_*" ]
+env_run_base.runner = "uv-venv-lock-runner"
