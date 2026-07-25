@@ -1,3 +1,5 @@
+# Copyright (c) 2026 Edgar-Ramírez Mondragón
+
 """Stream type classes for tap-eventbrite."""
 
 from __future__ import annotations
@@ -483,7 +485,7 @@ class Events(EventbriteStream):
         th.Property(
             "show_colors_in_seatmap_thumbnail",
             th.BooleanType,
-            description="For reserved seating event, if venue map thumbnail should have colors on the event page.",  # noqa: E501
+            description="For reserved seating event, if venue map thumbnail should have colors on the event page.",  # ruff: ignore[line-too-long]
         ),
         th.Property(
             "is_free",
@@ -567,17 +569,17 @@ class Events(EventbriteStream):
                 th.Property(
                     "country_code",
                     th.StringType,
-                    description="The ISO 3166 alpha-2 code of the country within which these checkout settings can apply.",  # noqa: E501
+                    description="The ISO 3166 alpha-2 code of the country within which these checkout settings can apply.",  # ruff: ignore[line-too-long]
                 ),
                 th.Property(
                     "currency_code",
                     th.StringType,
-                    description="The ISO 4217 3-character code of the currency for which these checkout settings can apply.",  # noqa: E501
+                    description="The ISO 4217 3-character code of the currency for which these checkout settings can apply.",  # ruff: ignore[line-too-long]
                 ),
                 th.Property(
                     "checkout_method",
                     th.StringType,
-                    description="The checkout method to use for completing consumer payment for tickets or other goods. Set of possible values [paypal, eventbrite, authnet, offline].",  # noqa: E501
+                    description="The checkout method to use for completing consumer payment for tickets or other goods. Set of possible values [paypal, eventbrite, authnet, offline].",  # ruff: ignore[line-too-long]
                 ),
                 th.Property(
                     "offline_settings",
@@ -596,7 +598,7 @@ class Events(EventbriteStream):
                 th.Property(
                     "user_instrument_vault_id",
                     th.StringType,
-                    description="The merchant account user instrument ID for the checkout method. Only specify this value for PayPal and Authorize.net checkout settings.",  # noqa: E501
+                    description="The merchant account user instrument ID for the checkout method. Only specify this value for PayPal and Authorize.net checkout settings.",  # ruff: ignore[line-too-long]
                 ),
             ),
             description="Additional data about the checkout settings of the Event.",

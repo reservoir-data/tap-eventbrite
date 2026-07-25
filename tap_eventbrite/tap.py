@@ -1,3 +1,5 @@
+# Copyright (c) 2026 Edgar-Ramírez Mondragón
+
 """Eventbrite tap class."""
 
 from __future__ import annotations

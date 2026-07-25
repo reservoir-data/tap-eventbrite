@@ -1,3 +1,5 @@
+# Copyright (c) 2026 Edgar-Ramírez Mondragón
+
 """REST client handling, including EventbriteStream base class."""
 
 from __future__ import annotations
