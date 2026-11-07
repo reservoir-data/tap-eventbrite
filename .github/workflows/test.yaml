@@ -6,27 +6,16 @@ permissions:
 on:
   push:
     branches: [main]
-    paths:
-      - tap_eventbrite/**
-      - tests/**
-      - pyproject.toml
-      - uv.lock
-      - .github/workflows/test.yaml
   pull_request:
     types: [opened, synchronize, reopened]
-    paths:
-      - tap_eventbrite/**
-      - tests/**
-      - pyproject.toml
-      - uv.lock
-      - .github/workflows/test.yaml
+  merge_group:
   workflow_dispatch:
   schedule:
   # Run weekly on Monday at 12:00 PM UTC
   - cron: "0 12 * * 1"
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
+  group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
   cancel-in-progress: true
 
 env:
@@ -39,8 +28,30 @@ env:
   TOX_UV_VERSION: 1.37.0
 
 jobs:
+  files-changed:
+    name: Detect file changes
+    runs-on: ubuntu-latest
+    outputs:
+      runtime: ${{ steps.changes.outputs.runtime }}
+    steps:
+    - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      with:
+        persist-credentials: false
+    - uses: dorny/paths-filter@ceb8a2b8f2d89434be7ff52d3de7ec3738c5cc9d # v4.0.3
+      id: changes
+      with:
+        filters: |
+          runtime:
+            - 'tap_eventbrite/**'
+            - 'tests/**'
+            - 'pyproject.toml'
+            - 'uv.lock'
+            - '.github/workflows/test.yaml'
+
   build-package:
     name: Build & verify package
+    needs: files-changed
+    if: ${{ needs.files-changed.outputs.runtime == 'true' }}
     runs-on: ubuntu-latest
     outputs:
       supported-python-versions: ${{ steps.baipp.outputs.supported_python_classifiers_json_array }}
@@ -65,7 +76,7 @@ jobs:
     - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       with:
         persist-credentials: false
-    - uses: astral-sh/setup-uv@07a047e608db84b3d8c06cd9a7c7dcc9c355c18e # v10.3.2
+    - uses: astral-sh/setup-uv@68559e99cc807c1eb7e9238fd43a15bba460eec2 # v10.3.3
       with:
         python-version: ${{ matrix.python-version }}
         version: ${{ env.UV_VERSION }}
@@ -88,7 +99,7 @@ jobs:
     - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       with:
         persist-credentials: false
-    - uses: astral-sh/setup-uv@07a047e608db84b3d8c06cd9a7c7dcc9c355c18e # v10.3.2
+    - uses: astral-sh/setup-uv@68559e99cc807c1eb7e9238fd43a15bba460eec2 # v10.3.3
       with:
         version: ${{ env.UV_VERSION }}
     - run: uv tool install --with tox-uv=="${TOX_UV_VERSION}" --from tox=="${TOX_VERSION}" tox
@@ -96,3 +107,18 @@ jobs:
       run: tox -e typing
     - name: Unused, missing and transitive dependencies
       run: tox -e dependencies
+
+  ci:
+    name: CI required checks
+    if: always()
+    needs:
+    - build-package
+    - test
+    - lint
+    runs-on: ubuntu-latest
+    steps:
+    - name: Decide whether the needed jobs succeeded or failed
+      uses: re-actors/alls-green@b5b5b37504aa4183270bd3d855c52a67f212be35 # v1.3.0
+      with:
+        jobs: ${{ toJSON(needs) }}
+        allowed-skips: build-package,test
