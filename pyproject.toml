@@ -14,13 +14,13 @@ keywords = [
   "Eventbrite",
   "singer.io",
 ]
-requires-python = ">=3.12"
+requires-python = ">=3.13"
 classifiers = [
   "Programming Language :: Python :: 3 :: Only",
-  "Programming Language :: Python :: 3.12",
   "Programming Language :: Python :: 3.13",
   "Programming Language :: Python :: 3.14",
   "Programming Language :: Python :: 3.15",
+  "Programming Language :: Python :: 3.16",
 ]
 dynamic = [
   "version",
@@ -63,8 +63,11 @@ typing = [
 source = "vcs"
 fallback-version = "0.0.0"
 
+[tool.uv]
+required-version = ">=0.13"
+
 [tool.ruff]
-required-version = ">=0.16"
+required-version = ">=0.17"
 line-length = 100
 preview = true
 [tool.ruff.lint]
@@ -88,7 +91,7 @@ flake8-annotations.allow-star-arg-any = true
 pydocstyle.convention = "google"
 
 [tool.pyproject-fmt]
-max_supported_python = "3.15"
+max_supported_python = "3.16"
 table_format = "long"
 
 [tool.mypy]
@@ -117,7 +120,7 @@ requires = [
 env_list = [
   "dependencies",
   "typing",
-  { prefix = "3.", start = 12 },
+  { prefix = "3.", start = 13 },
 ]
 [tool.tox.env.dependencies]
 description = "check for unused, missing and transitive dependencies"
